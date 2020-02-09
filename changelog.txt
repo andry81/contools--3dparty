@@ -1,3 +1,6 @@
+2020.02.10:
+* changed: back merge from the `tacklelib--3dparty` project
+
 2020.02.02:
 * new: integrated `pyxvcs` project to run standalone checkout independently to a version constrol system
 * changed: readme update

@@ -1,6 +1,6 @@
 * README_EN.txt
-* 2020.02.02
-* tacklelib--3dparty
+* 2020.02.10
+* contools--3dparty
 
 1. DESCRIPTION
 2. LICENSE
@@ -30,7 +30,7 @@
 -------------------------------------------------------------------------------
 1. DESCRIPTION
 -------------------------------------------------------------------------------
-Third party projects for the tacklelib project.
+Third party projects fork from the `tacklelib--3dparty` project.
 
 -------------------------------------------------------------------------------
 2. LICENSE
@@ -108,7 +108,7 @@ Temporary dropped usage:
 
 4. Patches:
 
-* Python site modules contains patches in the `_common/python_patches`
+* Python site modules contains patches in the `_pyxvcs/python_patches`
   subdirectory:
 
 ** fcache
