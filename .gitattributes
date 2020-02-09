@@ -18,6 +18,12 @@ _config/tmpl/{HUB}~svn~checkout.bat.in -text
 _config/tmpl/{HUB}~svn~makedirs.bat.in -text
 _config/tmpl/{HUB}~svn~relocate.bat.in -text
 _config/tmpl/{HUB}~svn~update.bat.in -text
+_scripts/01_checkout/01_configure.vars.bat -text
+_scripts/01_checkout/02_configure.private.bat -text
+_scripts/01_checkout/03_configure.yaml.bat -text
+_scripts/01_checkout/04_configure.bat -text
+_scripts/01_checkout/__init__.bat -text
+_scripts/__init__.bat -text
 /changelog.txt -text
 /environment.vars -text
 /install_python_modules.bat -text

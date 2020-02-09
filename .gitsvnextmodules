@@ -6,10 +6,10 @@
 	fetch = :refs/remotes/git-svn
 	remote = svn
 	type = dir
-[submodule "_scripts/01_checkout/tacklelib"]
-	path = _scripts/01_checkout/tacklelib
+[submodule "_scripts/01_checkout/contools"]
+	path = _scripts/01_checkout/contools
 	owner = /
-	url = svn://svn.code.sf.net/p/tacklelib/3dparty_checkout_scripts/trunk
+	url = svn://svn.code.sf.net/p/contools/3dparty_checkout_scripts/trunk
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
