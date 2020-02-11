@@ -1,5 +1,11 @@
 _config/*.vars
 _config/*.yaml
+_scripts/01_checkout/*.bat
+_scripts/01_checkout/*.lst
+_scripts/01_checkout/*.sh
+_scripts/01_checkout/*.vars
+_scripts/01_checkout/*.yaml
+_scripts/01_checkout/.log
 /_src
 /mingw*
 /vc*

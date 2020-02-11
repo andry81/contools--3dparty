@@ -1,4 +1,8 @@
 2020.02.10:
+* changed: svn ignores
+* changed: readme update
+
+2020.02.10:
 * changed: back merge from the `tacklelib--3dparty` project
 
 2020.02.02:
