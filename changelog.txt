@@ -1,3 +1,8 @@
+2020.02.24:
+* fixed: svn ignores
+* changed: merge from pyxvcs project
+* changed: `environment.vars` switch to msys instead of mingw paths
+
 2020.02.17:
 * changed: `environment.vars` file update
 

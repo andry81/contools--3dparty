@@ -64,7 +64,7 @@ global CMAKE_LIBRARY_PATH:UNIX="/usr/lib/i386-linux-gnu"
 
 # gui
 
-global WXWIDGETS_ROOT:WIN:GCC::X86="$/{CMAKE_CURRENT_LOAD_VARS_FILE_DIR}/mingw_gcc_x86/gui/wxwidgets/wxwidgets-3.1.3-build"
+global WXWIDGETS_ROOT:WIN:GCC::X86="$/{CMAKE_CURRENT_LOAD_VARS_FILE_DIR}/msys_gcc_x86/gui/wxwidgets/wxwidgets-3.1.3-build"
 global WXWIDGETS_ROOT:WIN:MSVC14.0::X86="$/{CMAKE_CURRENT_LOAD_VARS_FILE_DIR}/vc14_x86/gui/wxwidgets/wxwidgets-3.1.3-build"
 global WXWIDGETS_ROOT:WIN:MSVC14.1*::X86="$/{CMAKE_CURRENT_LOAD_VARS_FILE_DIR}/vc2017_x86/gui/wxwidgets/wxwidgets-3.1.3-build"
 global WXWIDGETS_ROOT:UNIX:GCC="$/{CMAKE_CURRENT_LOAD_VARS_FILE_DIR}/gcc_x86/gui/wxwidgets/wxwidgets-3.1.3-build"
