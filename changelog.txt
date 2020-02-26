@@ -1,4 +1,9 @@
 2020.02.27:
+* new: `__init__.bat` script port into `__init__.sh` script
+* new: `configure.bat` script port into `configure.sh` script
+* changed: missed change
+
+2020.02.27:
 * changed: readme update
 * refactor: cleanup
 
