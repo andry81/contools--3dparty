@@ -1,5 +1,5 @@
 * README_EN.txt
-* 2020.02.27
+* 2020.05.20
 * contools--3dparty
 
 1. DESCRIPTION
@@ -12,22 +12,27 @@
 8. PRECONFIGURE
 9. CONFIGURE
 10. USAGE
-11. SSH+SVN/PLINK SETUP
+11. THIRD PARTY SETUP
+11.1. ssh+svn/plink setup
 12. KNOWN ISSUES
-12.1. svn+ssh issues
-12.1.1. Message `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
-        `svn: E170012: Can't create tunnel`
-12.1.2. Message `Can't create session: Unable to connect to a repository at URL 'svn+ssh://...': `
-        `To better debug SSH connection problems, remove the -q option from ssh' in the [tunnels] section of your Subversion configuration file. `
-        `at .../Git/mingw64/share/perl5/Git/SVN.pm line 310.'`
-12.1.3. Message `Keyboard-interactive authentication prompts from server:`
-        `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
-        `svn: E210002: To better debug SSH connection problems, remove the -q option from 'ssh' in the [tunnels] section of your Subversion configuration file.`
-        `svn: E210002: Network connection closed unexpectedly`
-12.2. Python execution issues
-12.2.1. `OSError: [WinError 6] The handle is invalid`
-12.3. pytest execution issues
-12.4. fcache execution issues
+12.1. Python execution issues
+12.1.1. `OSError: [WinError 6] The handle is invalid`
+12.1.2. `ValueError: 'cwd' in __slots__ conflicts with class variable`
+12.1.3. `TypeError: descriptor 'combine' for type 'datetime.datetime' doesn't apply to type 'datetime'`
+12.2. Python modules issues
+12.2.1. pytest execution issues
+12.2.2. fcache execution issues
+12.3. External application issues
+12.3.1. svn+ssh issues
+12.3.1.1. Message `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
+          `svn: E170012: Can't create tunnel`
+12.3.1.2. Message `Can't create session: Unable to connect to a repository at URL 'svn+ssh://...': `
+          `To better debug SSH connection problems, remove the -q option from ssh' in the [tunnels] section of your Subversion configuration file. `
+          `at .../Git/mingw64/share/perl5/Git/SVN.pm line 310.'`
+12.3.1.3. Message `Keyboard-interactive authentication prompts from server:`
+          `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
+          `svn: E210002: To better debug SSH connection problems, remove the -q option from 'ssh' in the [tunnels] section of your Subversion configuration file.`
+          `svn: E210002: Network connection closed unexpectedly`
 13. AUTHOR
 
 -------------------------------------------------------------------------------
@@ -54,6 +59,18 @@ Second mirror:
   * https://bitbucket.org/andry81/tacklelib-3dparty/src/trunk
   * https://bitbucket.org/andry81/tacklelib-3dparty.git
 
+The `tacklelib` library repositories:
+
+Primary:
+  * https://sf.net/p/tacklelib/tacklelib/HEAD/tree/trunk
+  * https://svn.code.sf.net/p/tacklelib/tacklelib/trunk
+First mirror:
+  * https://github.com/andry81/tacklelib/tree/trunk
+  * https://github.com/andry81/tacklelib.git
+Second mirror:
+  * https://bitbucket.org/andry81/tacklelib/src/trunk
+  * https://bitbucket.org/andry81/tacklelib.git
+
 -------------------------------------------------------------------------------
 4. PREREQUISITES
 -------------------------------------------------------------------------------
@@ -64,7 +81,12 @@ IDE's, applications and patches to run with or from:
 1. OS platforms:
 
 * Windows 7 (`.bat` only, minimal version for the cmake 3.14)
-* Cygwin 1.7.x (`.sh` only)
+* Cygwin 1.5+ or 3.0+ (`.sh` only):
+  https://cygwin.com
+  - to run scripts under cygwin
+* Msys2 20190524+ (`.sh` only):
+  https://www.msys2.org
+  - to run scripts under msys2
 * Linux Mint 18.3 x64 (`.sh` only)
 
 2. C++11 compilers:
@@ -77,11 +99,15 @@ IDE's, applications and patches to run with or from:
 
 * bash shell 3.2.48+
   - to run unix shell scripts
-* python 3.7.3 or 3.7.5 (3.4+ or 3.5+)
+* perl 5.10+
+  - to run specific bash script functions with `perl` calls
+* python 3.7.3 or 3.7.5 (3.6.2+)
   https://python.org
   - standard implementation to run python scripts
-  - 3.7.4 has a bug in the `pytest` module execution, see `KNOWN ISSUES`
-    section
+  - 3.7.4 has a bug in the `pytest` module execution (see `KNOWN ISSUES`
+    section).
+  - 3.6.2+ is required due to multiple bugs in the python implementation prior
+    this version (see `KNOWN ISSUES` section).
   - 3.5+ is required for the direct import by a file path (with any extension)
     as noted in the documentation:
     https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
@@ -133,6 +159,13 @@ Not required.
   https://git-scm.com
   - to run git client
 
+* cygwin cygpath 1.42+
+  - to run `bash_entry` script under cygwin
+* msys cygpath 3.0+
+  - to run `bash_entry` script under msys2
+* cygwin readlink 6.10+
+  - to run specific bash script functions with `readlink` calls
+
 7. Patches:
 
 * Python site modules contains patches in the `_pyxvcs/python_patches`
@@ -151,13 +184,17 @@ Windows and in the Linux like platforms.
 
 NOTE:
   To run bash shell scripts (`.sh` file extension) you should copy the
-  `_pyxvcs/tools/bash_entry` into the `/bin` directory of your platform.
+  `_pyxvcs/tools/bash/tacklelib/bash_entry` into the `/bin` directory of your
+  platform.
 
-The project contains dependencies which must be taken and stored manually into
-`_src` directory, these are:
+NOTE: Make a script executable in the Linux:
+  sudo chmod ug+x <script>
+  sudo chmod o+r <script>
 
-* `boost` -> `_src/utility/boost/boost_1_72_0`:
-  https://boost.org
+NOTE:
+  To install python all required modules at once you can use
+  `install_python_modules.*` script as:
+  `install_python_modules.* <path-to-pathon-executable>`
 
 -------------------------------------------------------------------------------
 6. CATALOG CONTENT DESCRIPTION
@@ -223,26 +260,47 @@ source code hub per a version control system and declare basic project paths
 structure for a source code checkout. Can declare paths to checkout from public
 or private repositories.
 
-Stores these set of variables:
+May store these set of variables:
 
 * `SVN_SF.HUB_ROOT`
+* `SVN_LOCAL.DB_ROOT`
+* `GIT_GH.HUB_ROOT`
+* `GIT_LOCAL.DB_ROOT`
+* etc...
 
-Particulary for the Sourceforge the hub root path.
+Respectively the Sourceforge/Github/etc svn/git/etc hub root paths and
+svn/git/etc local database root paths.
 
 * `SVN_SF.HUB_ABBR`
+* `SVN_LOCAL.HUB_ABBR`
+* `GIT_GH.HUB_ABBR`
+* `GIT_LOCAL.HUB_ABBR`
+* etc...
 
-Particularly for the Sourceforge the hub abbreviated name used to generate and
-use the source code scripts to checkout or pull.
+Respectively the Sourceforge/Github/etc svn/git/etc hub abbreviated name and
+svn/git/etc local database abbreviated name.
+
+CAUTION:
+  The variable suffix must stay always the `HUB_ABBR` as a hardcoded
+  placeholder in the code.
 
 * `SVN_SF.USER`
+* `SVN_LOCAL.USER`
+* `GIT_GH.USER`
+* `GIT_LOCAL.USER`
+* etc...
 
-Particularly for the Sourceforge the user name used to checkout the source code
-from respective repository.
+Respectively the Sourceforge/Github/local/etc svn/git/etc user name to
+checkout/pull/etc with.
 
 * `SVN_SF.PROJECT_PATH_LIST`
+* `SVN_LOCAL.PROJECT_PATH_LIST`
+* `GIT_GIT.PROJECT_PATH_LIST`
+* `GIT_LOCAL.PROJECT_PATH_LIST`
+* etc...
 
-Particularly for the Sourceforge the project paths list there to generate
-configuration files and checkout scripts.
+Respectively the Sourceforge/Github/local/etc svn/git/etc project path list
+where to generate configuration files and checkout/pull/etc scripts.
 
 3. `_config/config.yaml`
 
@@ -335,19 +393,21 @@ From the `01_checkout` subdirectory:
    Edit `*.HUB_ABBR` and `*.PROJECT_PATH_LIST` variables to define how and
    where to generate respective command scripts.
    Edit all other variables from the `config.private.yaml` file.
-3. Run the `03_configure.yaml.*` script.
+3. Run the `03_configure.root_yaml.*` script.
    Edit `SVN_SSH_ENABLED` and `GIT_SSH_ENABLED` variables to properly
    enable/disable ssh protocol usage from the svn/git utilities.
    Edit `SVN_SSH_AGENT`, `GIT_SSH_AGENT`, `GIT_SVN_SSH_AGENT` variables related
    to the ssh protocol.
+4. Run the `04_configure.project_yaml.*` script.
    Edit the `WCROOT_OFFSET` variable in the respective `config.yaml` file
    and change the default working copies directory structure if is required to.
    Edit all other variables in `config.yaml` and `config.env.yaml` files.
-4. Run the `04_configure.*` script.
+5. Run the `05_configure.*` script.
+6. (Only in case of usage the Linux like environment)
+   Run the `06_configure.chmod.*` script.
 
 Note:
-  You can run respective configure scripts from a nested directory to apply
-  configuration separately in that nested directory.
+  Step 6 must be issued in the terminal with appropriate permissions.
 
 -------------------------------------------------------------------------------
 10. USAGE
@@ -390,7 +450,11 @@ Any deploy script format:
                   scheme use these parameters: `https://` `svn+ssh://`).
 
 -------------------------------------------------------------------------------
-11. SSH+SVN/PLINK SETUP
+11. THIRD PARTY SETUP
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+11.1. ssh+svn/plink setup
 -------------------------------------------------------------------------------
 Based on: https://stackoverflow.com/questions/11345868/how-to-use-git-svn-with-svnssh-url/58641860#58641860
 
@@ -471,108 +535,71 @@ For the issues around python xonsh module see details in the
 `README_EN.python_xonsh.known_issues.txt` file.
 
 -------------------------------------------------------------------------------
-12.1. svn+ssh issues
+12.1. Python execution issues
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
-12.1.1. Message `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
-        `svn: E170012: Can't create tunnel`
--------------------------------------------------------------------------------
-
-Issue #1:
-
-The `svn ...` command was run w/o properly configured putty plink utility or
-w/o the `SVN_SSH` environment variable with the user name parameter.
-
-Solution:
-
-Carefully read the `SSH+SVN/PLINK SETUP` section to fix most of the cases.
-
-Issue #2
-
-The `SVN_SSH` environment variable have has the backslash characters - `\`.
-
-Solution:
-
-Replace all the backslash characters by forward slash character - `/` or by
-double baskslash character - `\\`.
-
-Issue #3
-
-The `config.private.yaml` contains invalid values or was regenerated to
-default values.
-
-Solution:
-
-Manually edit variables in the file for correct values.
-
--------------------------------------------------------------------------------
-12.1.2. Message `Can't create session: Unable to connect to a repository at URL 'svn+ssh://...': `
-        `To better debug SSH connection problems, remove the -q option from ssh' in the [tunnels] section of your Subversion configuration file. `
-        `at .../Git/mingw64/share/perl5/Git/SVN.pm line 310.'`
+12.1.1. `OSError: [WinError 6] The handle is invalid`
 -------------------------------------------------------------------------------
 
 Issue:
 
-The `git svn ...` command should not be called with the `SVN_SSH` variable
-declared for the `svn ...` command.
+  The python interpreter (3.7, 3.8, 3.9) sometimes throws this message at exit,
+  see details here:
+
+  `subprocess.Popen._cleanup() "The handle is invalid" error when some old process is gone` :
+  https://bugs.python.org/issue37380
 
 Solution:
 
-Read docs about the `ssh-pageant` usage from the msys tools to fix that.
-
-See details: https://stackoverflow.com/questions/31443842/svn-hangs-on-checkout-in-windows/58613014#58613014
-
-NOTE:
-  The scripts does automatic maintain of the `ssh-pageant` utility startup.
-  All you have to do is to ensure that you are using valid paths and keys in
-  the respective configuration files.
+  Reinstall a different python version.
 
 -------------------------------------------------------------------------------
-12.1.3. Message `Keyboard-interactive authentication prompts from server:`
-        `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
-        `svn: E210002: To better debug SSH connection problems, remove the -q option from 'ssh' in the [tunnels] section of your Subversion configuration file.`
-        `svn: E210002: Network connection closed unexpectedly`
+12.1.2. `ValueError: 'cwd' in __slots__ conflicts with class variable`
 -------------------------------------------------------------------------------
 
-Related command: `git svn ...`
+Stack trace example:
 
-Issue #1:
-
-Network is disabled:
-
-Issue #2:
-
-The `pageant` application is not running or the provate SSH key is not added.
-
-Issue #3:
-
-The `ssh-pageant` utility is not running or the `git svn ...` command does run
-without the `SSH_AUTH_SOCK` environment variable properly registered.
-
-Solution:
-
-Read the deatils in the `SSH+SVN/PLINK SETUP` section.
-
--------------------------------------------------------------------------------
-12.2. Python execution issues
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
-12.2.1. `OSError: [WinError 6] The handle is invalid`
--------------------------------------------------------------------------------
+  File ".../python/tacklelib/tacklelib.py", line 265, in tkl_classcopy
+    cls_copy = type(x.__name__, x.__bases__, dict(x.__dict__))
 
 Issue:
 
-The python interpreter (3.7, 3.8, 3.9) sometimes throws this message at exit,
-see details here: https://bugs.python.org/issue37380
+  Bug in the python implementation prior version 3.5.4 or 3.6.2:
+
+  https://stackoverflow.com/questions/45864273/slots-conflicts-with-a-class-variable-in-a-generic-class/45868049#45868049
+  `typing module conflicts with __slots__-classes` :
+  https://bugs.python.org/issue31272
 
 Solution:
 
-Reinstall a different python version.
+  Upgrade python version at least up to 3.5.4 or 3.6.2.
 
 -------------------------------------------------------------------------------
-12.3. pytest execution issues
+12.1.3. `TypeError: descriptor 'combine' for type 'datetime.datetime' doesn't apply to type 'datetime'`
+-------------------------------------------------------------------------------
+
+Stack trace example:
+
+  File ".../python/tacklelib/tacklelib.py", line 278, in tkl_classcopy
+    for key, value in dict(inspect.getmembers(x)).items():
+  File ".../python/x86/35/lib/python3.5/inspect.py", line 309, in getmembers
+    value = getattr(object, key)
+
+Issue:
+
+  Bug in the python implementation prior version 3.6.2:
+
+Solution:
+
+  Upgrade python version at least up to 3.6.2.
+
+-------------------------------------------------------------------------------
+12.2. Python modules issues
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+12.2.1. pytest execution issues
 -------------------------------------------------------------------------------
 * `xonsh incorrectly reorders the test for the pytest` :
   https://github.com/xonsh/xonsh/issues/3380
@@ -582,7 +609,7 @@ Reinstall a different python version.
   https://github.com/pytest-dev/pytest/issues/6114
 
 -------------------------------------------------------------------------------
-12.4. fcache execution issues
+12.2.2. fcache execution issues
 -------------------------------------------------------------------------------
 * `fcache is not multiprocess aware on Windows` :
   https://github.com/tsroten/fcache/issues/26
@@ -590,6 +617,94 @@ Reinstall a different python version.
   https://github.com/tsroten/fcache/issues/27
 * `OSError: [WinError 17] The system cannot move the file to a different disk drive.` :
   https://github.com/tsroten/fcache/issues/28
+
+-------------------------------------------------------------------------------
+12.3. External application issues
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+12.3.1. svn+ssh issues
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+12.3.1.1. Message `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
+          `svn: E170012: Can't create tunnel`
+-------------------------------------------------------------------------------
+
+Issue #1:
+
+  The `svn ...` command was run w/o properly configured putty plink utility or
+  w/o the `SVN_SSH` environment variable with the user name parameter.
+
+Solution:
+
+  Carefully read the `ssh+svn/plink setup` section to fix most of the cases.
+
+Issue #2
+
+  The `SVN_SSH` environment variable have has the backslash characters - `\`.
+
+Solution:
+
+  Replace all the backslash characters by forward slash character - `/` or by
+  double baskslash character - `\\`.
+
+Issue #3
+
+  The `config.private.yaml` contains invalid values or was regenerated to
+  default values.
+
+Solution:
+
+  Manually edit variables in the file for correct values.
+
+-------------------------------------------------------------------------------
+12.3.1.2. Message `Can't create session: Unable to connect to a repository at URL 'svn+ssh://...': `
+          `To better debug SSH connection problems, remove the -q option from ssh' in the [tunnels] section of your Subversion configuration file. `
+          `at .../Git/mingw64/share/perl5/Git/SVN.pm line 310.'`
+-------------------------------------------------------------------------------
+
+Issue:
+
+  The `git svn ...` command should not be called with the `SVN_SSH` variable
+  declared for the `svn ...` command.
+
+Solution:
+
+  Read docs about the `ssh-pageant` usage from the msys tools to fix that.
+
+  See details: https://stackoverflow.com/questions/31443842/svn-hangs-on-checkout-in-windows/58613014#58613014
+
+NOTE:
+  The scripts does automatic maintain of the `ssh-pageant` utility startup.
+  All you have to do is to ensure that you are using valid paths and keys in
+  the respective configuration files.
+
+-------------------------------------------------------------------------------
+12.3.1.3. Message `Keyboard-interactive authentication prompts from server:`
+          `svn: E170013: Unable to connect to a repository at URL 'svn+ssh://...'`
+          `svn: E210002: To better debug SSH connection problems, remove the -q option from 'ssh' in the [tunnels] section of your Subversion configuration file.`
+          `svn: E210002: Network connection closed unexpectedly`
+-------------------------------------------------------------------------------
+
+Related command: `git svn ...`
+
+Issue #1:
+
+  Network is disabled:
+
+Issue #2:
+
+  The `pageant` application is not running or the private SSH key is not added.
+
+Issue #3:
+
+  The `ssh-pageant` utility is not running or the `git svn ...` command does
+  run without the `SSH_AUTH_SOCK` environment variable properly registered.
+
+Solution:
+
+  Read the deatils in the `ssh+svn/plink setup` section.
 
 -------------------------------------------------------------------------------
 13. AUTHOR
